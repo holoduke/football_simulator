@@ -69,3 +69,16 @@ var data =
             }
 
 ```
+
+The localteam and visitorteam properties are containing each 11 players.
+Each player has an
+* id - must be an unique numbeer
+* att - this represents attack skill. The higher the number the better attack skills the player has
+* def - this represents defense skills.
+* position - position of the player. The field is devided into sectors. Each player must be put in a unique sector before the match starts.
+The field is 7 by 6 long. 0,0 represents lower left part of the field. 7,6 upper right.
+You can setup different formations types by positioning players differently. In the JSON
+above we have a 4-3-3 formation.
+* type - either, def, mid or att. This says something about the wanted skill level of the player.
+You can position a def player in an attack position, but that would not really make sense.
+
