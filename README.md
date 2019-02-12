@@ -71,9 +71,9 @@ var data =
 ```
 
 The localteam and visitorteam properties are containing each 11 players.
-Each player has an
+Each player has the following data properties:
 * id - must be an unique numbeer
-* att - this represents attack skill. The higher the number the better attack skills the player has
+* att - this represents attack skill. The higher the number the better attack skills the player has.
 * def - this represents defense skills.
 * position - position of the player. The field is devided into sectors. Each player must be put in a unique sector before the match starts.
 The field is 7 by 6 long. 0,0 represents lower left part of the field. 7,6 upper right.
@@ -81,4 +81,14 @@ You can setup different formations types by positioning players differently. In 
 above we have a 4-3-3 formation.
 * type - either, def, mid or att. This says something about the wanted skill level of the player.
 You can position a def player in an attack position, but that would not really make sense.
+
+## sockets and communication
+Each game opens a socket which gives your application the possibility to communicate and receive data.
+Usually on unix systems this is just a file handler. In most languages you have the ability to open a socket.
+The path to this socket is given to the football simulator.
+Data on a socket is received in plain text. In order to know when you received a complete data part, the data has termination markers.
+These termination markers are always marked with |||
+see server.js for an implementation example.
+Every data part is in JSON format and contains a "type" property. You can use this type property
+to identify the type of event. For example goal, foul, halftime, fulltime etc.
 
