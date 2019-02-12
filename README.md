@@ -4,6 +4,8 @@ the goal is to accurately simulate matches based on certain player abilities.
 It generates events for goals and corners. It has support for penalties and aggregate matches in tournaments
 This software does not have any graphics. The simulator is ment to serve in a backend to play matches.
 It is highly optimized and can run thousands of matches simultanously.
+The simulator talks to your application via a socket. Your application can receive all possible events for a football match:
+Goals, fouls, halftime, penalties etc.
 
 # Install
 
