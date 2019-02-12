@@ -78,7 +78,6 @@ var playMatch = function (binary, data, events) {
 
             allowConnection = false;
 
-            //console.log('server connected ',socketPath);
             c.on('end', function () {
                 dataToProcess = null;
                 server.close();
@@ -88,7 +87,6 @@ var playMatch = function (binary, data, events) {
                 c.destroy();
                 c = null;
                 server = null;
-                //console.log('server disconnected. client is finished ',socketPath);
             });
 
             var internalBuffer = "";
@@ -180,7 +178,6 @@ module.exports = {
         function doneOrNot(){
             stats.runsDone++;
             runsDone++;
-            //console.log("done or not "+runsDone+"/"+runs);
             if (runsDone == runs){
                 console.log("run "+stats.runsDone+" matches. homewin:"+stats.homeWin+" - awaywin:"+stats.awayWin+" - draw:"+stats.draw+" - AET:"+stats.afterExtraTimeEnded+" - PEN:"+stats.penaltyEnded
                     +" - highest goal score: "+stats.highest_goal_count+" total goals: "+stats.total_goals+" - avg goals per match: "+stats.avg_goals_per_match+" - longest penalty session:"+stats.longest_penalty_session
@@ -189,7 +186,6 @@ module.exports = {
                     completecb();
                 }
             }
-
         }
 
         for (var i=0; i < runs;i++) {
