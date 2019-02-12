@@ -24,10 +24,10 @@ Pay attention to the required parameters when running the command:
 
 {binary} {matchspeed} {socket} {data}
 
-{binary} = compile executable
-{matchspeed} = multplier of match speed. 1 = 90 minutes. 10 = 9 minutes etc
-{socket} = socket path for communication with the program. If you want to receive events during the game you need to open a socket in your application which can communicate with this process.
-{data} = This data is contains all information to play a match: The data must be in the following JSON format:
+* {binary} = compile executable
+* {matchspeed} = multplier of match speed. 1 = 90 minutes. 10 = 9 minutes etc
+* {socket} = socket path for communication with the program. If you want to receive events during the game you need to open a socket in your application which can communicate with this process.
+* {data} = This data is contains all information to play a match: The data must be in the following JSON format:
 
 ```javascript
 var data =
