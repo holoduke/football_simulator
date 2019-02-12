@@ -194,12 +194,12 @@ module.exports = {
             matchId++;
 
             var data =
-            {  /// match 1:   A : 2 - 2 : B   ,  match 2:   A : 1 - 1 : B
-                "id" : matchId+Math.random()*10000000,
-                "matchSpeed" : speed,
-                "requireWinner" : 1,
+            {
+                "id" : matchId+Math.random()*10000000, //unique identifier for a match. must be unique when using paralell
+                "matchSpeed" : speed, ///multplier of match speed. 1 = 90 minutes. 10 = 9 minutes etc
+                "requireWinner" : 1, //if 1 a match will end with score difference or penalties
                 "useAggregateHistory" : 0,
-                "aggr_history_local_away_goals" :0, //local was away in previous match. local points to team A in this match, but is in fact team B in previous match
+                "aggr_history_local_away_goals" :0, //Aggregation score of a previous match
                 "aggr_history_visitor_away_goals" :0,
                 "aggr_history_local_home_goals" :0,
                 "aggr_history_visitor_home_goals" :0,
