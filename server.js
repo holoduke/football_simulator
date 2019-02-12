@@ -70,6 +70,7 @@ var playMatch = function (binary, data, events) {
     fs.unlink(socketPath, function () {
         var server = net.createServer(function (c) {
 
+
             if (!allowConnection) {
                 console.log("ignore processing. process can be connected only once");
                 c.destroy();
@@ -193,12 +194,12 @@ module.exports = {
             matchId++;
 
             var data =
-            {  /// match 1:   A : 2 - 2 : B   ,  match 2:   A : 1 - 1 : B
-                "id" : matchId+random()*10000000,
-                "matchSpeed" : speed,
-                "requireWinner" : 1,
+            {
+                "id" : matchId+Math.random()*10000000, //unique identifier for a match. must be unique when using paralell
+                "matchSpeed" : speed, ///multplier of match speed. 1 = 90 minutes. 10 = 9 minutes etc
+                "requireWinner" : 1, //if 1 a match will end with score difference or penalties
                 "useAggregateHistory" : 0,
-                "aggr_history_local_away_goals" :0, //local was away in previous match. local points to team A in this match, but is in fact team B in previous match
+                "aggr_history_local_away_goals" :0, //Aggregation score of a previous match
                 "aggr_history_visitor_away_goals" :0,
                 "aggr_history_local_home_goals" :0,
                 "aggr_history_visitor_home_goals" :0,
@@ -390,7 +391,7 @@ if (process.argv[2] == "test"){
     var speed = 1000000000000;
     var paralell = 500;
     var runs = 1;
-    var binary = "./footballsimulator2";
+    var binary = "./bin/footballsimulator";
     if (process.argv[3]){
         speed = process.argv[3];
     }
