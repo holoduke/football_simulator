@@ -70,6 +70,7 @@ var playMatch = function (binary, data, events) {
     fs.unlink(socketPath, function () {
         var server = net.createServer(function (c) {
 
+
             if (!allowConnection) {
                 console.log("ignore processing. process can be connected only once");
                 c.destroy();
@@ -194,7 +195,7 @@ module.exports = {
 
             var data =
             {  /// match 1:   A : 2 - 2 : B   ,  match 2:   A : 1 - 1 : B
-                "id" : matchId+random()*10000000,
+                "id" : matchId+Math.random()*10000000,
                 "matchSpeed" : speed,
                 "requireWinner" : 1,
                 "useAggregateHistory" : 0,
@@ -232,45 +233,45 @@ module.exports = {
 
             var events = {
                 onStart : function(result){
-                    //console.log("on start","aggregate score: local-home:"+result.aggr_local_home_goals,", local-away:"+result.aggr_local_away_goals+", visitor-home:"+result.aggr_visitor_home_goals,", visitor-away:"+result.aggr_visitor_away_goals);
+                    console.log("on start","aggregate score: local-home:"+result.aggr_local_home_goals,", local-away:"+result.aggr_local_away_goals+", visitor-home:"+result.aggr_visitor_home_goals,", visitor-away:"+result.aggr_visitor_away_goals);
                 },
                 onHalfTimeStart : function(result){
-                    //console.log("on halftime start");
+                    console.log("on halftime start");
                 },
                 onHalfTimeFinish : function(result){
-                    //console.log("on halftime finish");
+                    console.log("on halftime finish");
                 },
                 onGoal : function(result){
-                    //console.log("on goal ",result.localscore+" - "+result.visitorscore);
+                    console.log("on goal ",result.localscore+" - "+result.visitorscore);
                 },
                 onFoul : function(result){
-                    //console.log("on foul");
+                    console.log("on foul");
                 },
                 break_before_et_start : function(result){
-                    //console.log("break before et");
+                    console.log("break before et");
                 },
                 extra_time_first_half_start : function(result){
-                    //console.log("extra_time_first_half_start");
+                    console.log("extra_time_first_half_start");
                 },
                 break_between_et_start : function(result){
-                    //console.log("break_between_et_start");
+                    console.log("break_between_et_start");
                 },
                 extra_time_second_half_start : function(result){
-                    //console.log("extra_time_second_half_start");
+                    console.log("extra_time_second_half_start");
                 },
                 break_before_penalty_start : function(result){
-                    //console.log("break_before_penalty_start");
+                    console.log("break_before_penalty_start");
                 },
                 penalty_session_start : function(result){
-                    //console.log("penalty_session_start");
+                    console.log("penalty_session_start");
                 },
                 penalty_session_goal : function(result){
-                    //console.log("on penalty_session_goal",result.localPenaltyScore+" - "+result.visitorPenaltyScore);
+                    console.log("on penalty_session_goal",result.localPenaltyScore+" - "+result.visitorPenaltyScore);
                     stats.longest_penalty_session = Math.max(stats.longest_penalty_session,result.round);
                     //stats.avg_penalty_session_length = Math.round((stats.total_penalty_session_rounds/stats.penaltyEnded)*100)/100;
                 },
                 penalty_session_miss : function(result){
-                    //console.log("on penalty_session_miss",result.side);
+                    console.log("on penalty_session_miss",result.side);
                     stats.longest_penalty_session = Math.max(stats.longest_penalty_session,result.round);
                 },
                 onFinish : function (result) {
@@ -373,7 +374,7 @@ module.exports = {
                     doneOrNot();
                 },
                 onMinute : function(result){
-                    //console.log("on minute ",result.minute);
+                    console.log("on minute ",result.minute);
                 }
             }
 
@@ -388,9 +389,9 @@ module.exports = {
 
 if (process.argv[2] == "test"){
     var speed = 1000000000000;
-    var paralell = 500;
+    var paralell = 1;
     var runs = 1;
-    var binary = "./footballsimulator2";
+    var binary = "./bin/footballsimulator";
     if (process.argv[3]){
         speed = process.argv[3];
     }
