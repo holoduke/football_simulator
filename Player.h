@@ -37,10 +37,11 @@ class Player {
     PlayerStats stats;
     int attack;
     int defense;
+    int aggressiveness = 50;
     int corners = 30;
     bool moveProbabilitiesCalculated = false;
 
-    Player(const int id, Position *p, Type t, int att, int def):id(id),position(p),type(t), attack(att), defense(def){
+    Player(const int id, Position *p, Type t, int att, int def, int aggr = 50):id(id),position(p),type(t), attack(att), defense(def), aggressiveness(aggr){
         stats = PlayerStats();
     }
     ~Player(){

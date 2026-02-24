@@ -75,6 +75,7 @@ int main(int argc, char* argv[]) {
         int playerId = c["id"].GetInt();
         int defense =c["def"].GetInt();
         int attack =c["att"].GetInt();
+        int aggr = c.HasMember("aggr") ? c["aggr"].GetInt() : 50;
         string type = c["type"].GetString();
         int x = c["position"].GetArray()[0].GetInt();
         int y = c["position"].GetArray()[1].GetInt();
@@ -97,7 +98,7 @@ int main(int argc, char* argv[]) {
 
         // LOG(INFO) << "add home player " << type << "id " << playerId << "pos " << x << "," << y << "att " << attack <<" def" << defense;
 
-        Player * player = new Player(playerId,position,playertype,attack,defense);
+        Player * player = new Player(playerId,position,playertype,attack,defense,aggr);
         lineup.addPlayer(player,Player::Side::Home);
     }
 
@@ -108,6 +109,7 @@ int main(int argc, char* argv[]) {
         int playerId = c["id"].GetInt();
         int defense =c["def"].GetInt();
         int attack =c["att"].GetInt();
+        int aggr = c.HasMember("aggr") ? c["aggr"].GetInt() : 50;
         string type = c["type"].GetString();
         int x = c["position"].GetArray()[0].GetInt();
         int y = c["position"].GetArray()[1].GetInt();
@@ -132,7 +134,7 @@ int main(int argc, char* argv[]) {
         //LOG(INFO) << "add away player " << type << "id " << playerId << "pos " << x << "," << y << "att " << attack <<" def" << defense;
 
         //player destroy in lineup destructor
-        Player * player = new Player(playerId,position,playertype,attack,defense);
+        Player * player = new Player(playerId,position,playertype,attack,defense,aggr);
         lineup.addPlayer(player,Player::Side::Away);
     }
 

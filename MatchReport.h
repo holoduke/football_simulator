@@ -47,6 +47,12 @@ public:
     int home_corner_goals = 0;
     int away_corners = 0;
     int away_corner_goals = 0;
+    int home_fouls = 0;
+    int away_fouls = 0;
+    int home_yellowcards = 0;
+    int away_yellowcards = 0;
+    int home_redcards = 0;
+    int away_redcards = 0;
     float home_ballposession_perc = 0;
     float away_ballposession_perc = 0;
     float random = game::Util::getRandom() * 100000;
@@ -76,6 +82,12 @@ public:
         ss << "\"away_corners\":" << away_corners << ",";
         ss << "\"home_corner_goal\":" << home_corner_goals << ",";
         ss << "\"away_corner_goal\":" << away_corner_goals << ",";
+        ss << "\"home_fouls\":" << home_fouls << ",";
+        ss << "\"away_fouls\":" << away_fouls << ",";
+        ss << "\"home_yellowcards\":" << home_yellowcards << ",";
+        ss << "\"away_yellowcards\":" << away_yellowcards << ",";
+        ss << "\"home_redcards\":" << home_redcards << ",";
+        ss << "\"away_redcards\":" << away_redcards << ",";
         ss << "\"home_ballposession_perc\":" << (((home_ballposession*1.0)/ (home_ballposession+away_ballposession)) * 100.0) << ",";
         ss << "\"away_ballposession_perc\":" << (((away_ballposession*1.0)/ (away_ballposession+home_ballposession)) * 100.0);
         ss << "}";
@@ -215,6 +227,12 @@ public:
         ss << "\"away_corners\":" << away_corners << ",";
         ss << "\"home_corner_goal\":" << home_corner_goals << ",";
         ss << "\"away_corner_goal\":" << away_corner_goals << ",";
+        ss << "\"home_fouls\":" << home_fouls << ",";
+        ss << "\"away_fouls\":" << away_fouls << ",";
+        ss << "\"home_yellowcards\":" << home_yellowcards << ",";
+        ss << "\"away_yellowcards\":" << away_yellowcards << ",";
+        ss << "\"home_redcards\":" << home_redcards << ",";
+        ss << "\"away_redcards\":" << away_redcards << ",";
         ss << "\"home_ballposession_perc\":" << (((home_ballposession*1.0)/ (home_ballposession+away_ballposession)) * 100.0) << ",";
         ss << "\"away_ballposession_perc\":" << (((away_ballposession*1.0)/ (away_ballposession+home_ballposession)) * 100.0)   ;
         ss << "},";
@@ -235,7 +253,11 @@ public:
             ss << "\"shotsOnGoal\":" << game->options.lineup.homeplayers[i]->stats.shotsOnGoal << ",";
             ss << "\"blocks\":" << game->options.lineup.homeplayers[i]->stats.blocks << ",";
             ss << "\"cornerGoals\":" << game->options.lineup.homeplayers[i]->stats.cornerGoals << ",";
-            ss << "\"corners\":" << game->options.lineup.homeplayers[i]->stats.corners << "";
+            ss << "\"corners\":" << game->options.lineup.homeplayers[i]->stats.corners << ",";
+            ss << "\"fouls\":" << game->options.lineup.homeplayers[i]->stats.fouls << ",";
+            ss << "\"yellowcards\":" << game->options.lineup.homeplayers[i]->stats.yellowcard << ",";
+            ss << "\"redcards\":" << game->options.lineup.homeplayers[i]->stats.redcard << ",";
+            ss << "\"yellowredcards\":" << game->options.lineup.homeplayers[i]->stats.yellowredcard;
 
             ss << "}";
         }
@@ -256,7 +278,11 @@ public:
             ss << "\"shotsOnGoal\":" << game->options.lineup.awayplayers[i]->stats.shotsOnGoal << ",";
             ss << "\"blocks\":" << game->options.lineup.awayplayers[i]->stats.blocks << ",";
             ss << "\"cornerGoals\":" << game->options.lineup.awayplayers[i]->stats.cornerGoals << ",";
-            ss << "\"corners\":" << game->options.lineup.awayplayers[i]->stats.corners << "";
+            ss << "\"corners\":" << game->options.lineup.awayplayers[i]->stats.corners << ",";
+            ss << "\"fouls\":" << game->options.lineup.awayplayers[i]->stats.fouls << ",";
+            ss << "\"yellowcards\":" << game->options.lineup.awayplayers[i]->stats.yellowcard << ",";
+            ss << "\"redcards\":" << game->options.lineup.awayplayers[i]->stats.redcard << ",";
+            ss << "\"yellowredcards\":" << game->options.lineup.awayplayers[i]->stats.yellowredcard;
 
             ss << "}";
         }
@@ -265,6 +291,28 @@ public:
 
         ss << "}|||";
 
+        return ss.str();
+    }
+
+    string toStringFoul(Player::Side side){
+        std::stringstream ss;
+        ss << "{";
+        ss << "\"type\":\"foul\",";
+        ss << "\"side\":\"" << (side == Player::Side::Home ? "home" : "away") << "\",";
+        ss << "\"minute\":\"" << minute << "\"";
+        ss << "}|||";
+        return ss.str();
+    }
+
+    string toStringCard(string cardType, Player::Side side, int sourceId){
+        std::stringstream ss;
+        ss << "{";
+        ss << "\"type\":\"card\",";
+        ss << "\"cardType\":\"" << cardType << "\",";
+        ss << "\"side\":\"" << (side == Player::Side::Home ? "home" : "away") << "\",";
+        ss << "\"sourceId\":" << sourceId << ",";
+        ss << "\"minute\":\"" << minute << "\"";
+        ss << "}|||";
         return ss.str();
     }
 
@@ -519,8 +567,67 @@ public:
         interceptor->stats.blocks++;
     }
 
-    void onFoul(Player * source, Player * victim, int card){
+    void onFoul(Player * fouler, Player * victim, int minute){
+        fouler->stats.fouls++;
 
+        if (fouler->side == Player::Side::Home){
+            stats.home_fouls++;
+        } else {
+            stats.away_fouls++;
+        }
+
+        // Send foul event
+        com->send(stats.toStringFoul(fouler->side).c_str());
+
+        // Determine if a card should be given based on aggressiveness
+        double cardChance = 0.08 + (fouler->aggressiveness / 255.0) * 0.12;
+        double redChance = 0.005 + (fouler->aggressiveness / 255.0) * 0.02;
+
+        if (game::Util::getRandom() < redChance && fouler->stats.redcard == 0){
+            // Direct red card
+            if (fouler->stats.yellowcard > 0){
+                // Already has a yellow, this becomes yellow-red
+                fouler->stats.yellowredcard++;
+                if (fouler->side == Player::Side::Home){
+                    stats.home_redcards++;
+                } else {
+                    stats.away_redcards++;
+                }
+                com->send(stats.toStringCard("yellowred", fouler->side, fouler->id).c_str());
+                LOG(INFO) << "yellow-red card for player " << fouler->id << " at minute " << minute;
+            } else {
+                fouler->stats.redcard++;
+                if (fouler->side == Player::Side::Home){
+                    stats.home_redcards++;
+                } else {
+                    stats.away_redcards++;
+                }
+                com->send(stats.toStringCard("red", fouler->side, fouler->id).c_str());
+                LOG(INFO) << "red card for player " << fouler->id << " at minute " << minute;
+            }
+        }
+        else if (game::Util::getRandom() < cardChance){
+            if (fouler->stats.yellowcard > 0 && fouler->stats.yellowredcard == 0){
+                // Second yellow = yellow-red
+                fouler->stats.yellowredcard++;
+                if (fouler->side == Player::Side::Home){
+                    stats.home_redcards++;
+                } else {
+                    stats.away_redcards++;
+                }
+                com->send(stats.toStringCard("yellowred", fouler->side, fouler->id).c_str());
+                LOG(INFO) << "second yellow (yellow-red) for player " << fouler->id << " at minute " << minute;
+            } else if (fouler->stats.yellowcard == 0) {
+                fouler->stats.yellowcard++;
+                if (fouler->side == Player::Side::Home){
+                    stats.home_yellowcards++;
+                } else {
+                    stats.away_yellowcards++;
+                }
+                com->send(stats.toStringCard("yellow", fouler->side, fouler->id).c_str());
+                LOG(INFO) << "yellow card for player " << fouler->id << " at minute " << minute;
+            }
+        }
     }
 
     Communication * com;

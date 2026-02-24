@@ -40,8 +40,8 @@ bool game::Communication::init() {
 }
 
 bool game::Communication::send(const char *data) {
-    char buffer[8096];
-    int nbytes = snprintf(buffer, 8096, data);
+    char buffer[16384];
+    int nbytes = snprintf(buffer, 16384, "%s", data);
     int n = write(socket_fd, buffer, nbytes);
 
     //LOG(INFO) << "complete socket write with result: " << n;

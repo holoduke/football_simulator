@@ -374,16 +374,23 @@ namespace game {
             else{
                 if (choice->whenLostPassTo != NULL){
 
-                    //when ball is lost it can also be a foul. calculate that here.
-                    if (game::Util::getRandom() > 0.9){
-                        LOG(INFO) << "ball is lost, but we have a foul";
-                        if (game::Util::getRandom() > 0.9){
-                            LOG(INFO) << "and a yellowcard";
-                        }
-                    }
+                    // When ball is lost, check if it's a foul based on interceptor aggressiveness
+                    double foulChance = 0.02 + (choice->whenLostPassTo->aggressiveness / 255.0) * 0.08;
+                    bool isFoul = game::Util::getRandom() < foulChance;
 
-                    matchReport.onBallPassFail(choice->fromPlayer,choice->whenLostPassTo, currentMinute);
-                    ballPosition.set(choice->whenLostPassTo->position->x,choice->whenLostPassTo->position->y); // give ball to interceptor
+                    if (isFoul){
+                        // It's a foul - the interceptor fouled the passer
+                        matchReport.onFoul(choice->whenLostPassTo, choice->fromPlayer, currentMinute);
+
+                        // Free kick: ball goes to a teammate of the fouled player
+                        Player * freeKickTaker = options.lineup.getRandomPlayerFromTeam(choice->fromPlayer->side, choice->fromPlayer);
+                        ballPosition.set(freeKickTaker->position->x, freeKickTaker->position->y);
+                    }
+                    else{
+                        // Normal interception
+                        matchReport.onBallPassFail(choice->fromPlayer,choice->whenLostPassTo, currentMinute);
+                        ballPosition.set(choice->whenLostPassTo->position->x,choice->whenLostPassTo->position->y); // give ball to interceptor
+                    }
                 }
                 else{
                     LOG(INFO) << "error no whenlosttopassto palyer";
