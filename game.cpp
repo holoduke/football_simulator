@@ -375,7 +375,7 @@ namespace game {
                 if (choice->whenLostPassTo != NULL){
 
                     // When ball is lost, check if it's a foul based on interceptor aggressiveness
-                    double foulChance = 0.02 + (choice->whenLostPassTo->aggressiveness / 255.0) * 0.08;
+                    double foulChance = 0.06 + (choice->whenLostPassTo->aggressiveness / 255.0) * 0.14;
                     bool isFoul = game::Util::getRandom() < foulChance;
 
                     if (isFoul){

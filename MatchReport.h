@@ -580,7 +580,7 @@ public:
         com->send(stats.toStringFoul(fouler->side).c_str());
 
         // Determine if a card should be given based on aggressiveness
-        double cardChance = 0.08 + (fouler->aggressiveness / 255.0) * 0.12;
+        double cardChance = 0.10 + (fouler->aggressiveness / 255.0) * 0.15;
         double redChance = 0.005 + (fouler->aggressiveness / 255.0) * 0.02;
 
         if (game::Util::getRandom() < redChance && fouler->stats.redcard == 0){
