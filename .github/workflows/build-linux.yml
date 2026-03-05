@@ -1,0 +1,25 @@
+name: Build Linux Binary
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install build tools
+        run: sudo apt-get update && sudo apt-get install -y cmake g++
+      
+      - name: Build
+        run: |
+          mkdir -p build && cd build
+          cmake -DCMAKE_BUILD_TYPE=Release ..
+          make -j$(nproc)
+          ls -la bin/
+          file bin/footballsimulator
+      
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: footballsimulator-linux-x64
+          path: build/bin/footballsimulator
